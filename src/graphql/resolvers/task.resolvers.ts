@@ -1,10 +1,14 @@
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { Task } from "../models/task.model";
 import { TasksService } from "src/tasks/tasks.service";
 import { TaskInputDto } from "src/tasks/dto/task.input";
 import { TaskUpdateDto } from "src/tasks/dto/task.update";
+import { CustomRequest } from "src/common/interface/request.interface";
+import { Req, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "src/auth/auth.guard";
 
 @Resolver(() => Task)
+@UseGuards(AuthGuard)
 export class TasksResolver {
     constructor(private tasksService: TasksService) {}
 
@@ -35,9 +39,13 @@ export class TasksResolver {
     // Mutation to create a new task
     @Mutation(returns => Task)
     createTask(
-        @Args('taskInput') taskInput: TaskInputDto
+        @Args('taskInput') taskInput: TaskInputDto,
+        @Context() context: any
     ): Promise<Task> {
-        return this.tasksService.createTask(taskInput);
+        const userId = context.req.user.id;
+        console.log(userId, "<<userId");
+        
+        return this.tasksService.createTask(taskInput, userId);
     }
 
     // Mutation to update an existing task by ID
@@ -51,9 +59,11 @@ export class TasksResolver {
 
     // Mutation to delete a task by ID
     @Mutation(returns => Task)
-    deleteTask(
+    async deleteTask(
         @Args('id', { type: () => Int }) id: number
     ): Promise<Task> {
-        return this.tasksService.deleteTask(id);
+        const task = await this.tasksService.deleteTask(id);
+
+        return task;
     }
 }

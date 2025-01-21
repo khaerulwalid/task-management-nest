@@ -4,12 +4,16 @@ import { Repository } from 'typeorm';
 import { Task } from 'src/entities/tasks.entity';
 import { TaskInputDto } from './dto/task.input';
 import { TaskUpdateDto } from './dto/task.update';
+import { GraphqlException } from 'src/common/graphql.exception';
+import { User } from 'src/entities/users.entity';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    @InjectRepository(User)  // Menggunakan UserRepository
+    private readonly userRepository: Repository<User>,
   ) {}
 
   // Mendapatkan semua tasks dengan filter opsional
@@ -25,17 +29,16 @@ export class TasksService {
         where.due_date = filterByDueDate;
       }
 
-      return await this.taskRepository.find({ where });
+      const result = await this.taskRepository.find({
+        where,
+        relations: ['user'],
+      });
+      console.log(result, "<<Result");
+      
+      return result;
     } catch (error) {
       console.log(error, "<<Error");
-      
-      throw new HttpException(
-        {
-          message: 'Error retrieving tasks',
-          error: error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
@@ -45,35 +48,46 @@ export class TasksService {
       const task = await this.taskRepository.findOne({ where: { id } });
 
       if (!task) {
-        throw new HttpException({
-          message: 'Task not found',
-          error: 'NotFoundException',
-        }, HttpStatus.NOT_FOUND);
+        throw new GraphqlException(
+            'Task not found',
+            'NotFoundException',
+            HttpStatus.NOT_FOUND,
+        );
       }
 
       return task;
     } catch (error) {
-      throw new HttpException({
-        message: 'Error retrieving task details',
-        error: error.message,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw error;
     }
   }
 
   // Membuat task baru
-  async createTask(taskDto: TaskInputDto): Promise<Task> {
+  async createTask(taskDto: TaskInputDto, userId: number): Promise<Task> {
     try {
+      // Validasi apakah user_id ada di tabel users
+      const user = await this.userRepository.findOne({
+        where: {
+          id: userId,
+        }
+      });
+
+      if (!user) {
+        throw new GraphqlException(
+          'User not found',
+          'BadRequestException',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       // Normalisasi atau validasi data jika perlu
-      const task = this.taskRepository.create(taskDto);
+      const task = this.taskRepository.create({
+        ...taskDto,
+        user: user,
+      });
 
       return await this.taskRepository.save(task);
     } catch (error) {
-      console.log(error, "<<Error Create");
-      
-      throw new HttpException({
-        message: 'Error creating task',
-        error: error.message,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw error;
     }
   }
 
@@ -83,10 +97,11 @@ export class TasksService {
       const task = await this.taskRepository.findOne({ where: { id } });
 
       if (!task) {
-        throw new HttpException({
-          message: 'Task not found',
-          error: 'NotFoundException',
-        }, HttpStatus.NOT_FOUND);
+        throw new GraphqlException(
+          'Task not found',
+          'NotFoundException',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       // Mengupdate task
@@ -94,10 +109,7 @@ export class TasksService {
 
       return await this.taskRepository.save(task);
     } catch (error) {
-      throw new HttpException({
-        message: 'Error updating task',
-        error: error.message,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw error;
     }
   }
 
@@ -107,19 +119,17 @@ export class TasksService {
       const task = await this.taskRepository.findOne({ where: { id } });
 
       if (!task) {
-        throw new HttpException({
-          message: 'Task not found',
-          error: 'NotFoundException',
-        }, HttpStatus.NOT_FOUND);
+        throw new GraphqlException(
+          'Task not found',
+          'NotFoundException',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       await this.taskRepository.remove(task);
       return task;
     } catch (error) {
-      throw new HttpException({
-        message: 'Error deleting task',
-        error: error.message,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw error;
     }
   }
 }

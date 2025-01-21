@@ -28,14 +28,15 @@ type Mutation {
   createTask(taskInput: TaskInputDto!): Task!
   updateTask(id: Int!, taskInput: TaskUpdateDto!): Task!
   deleteTask(id: Int!): Task!
+  register(registerInput: RegisterDto!): User!
+  login(loginInput: LoginDto!): String!
 }
 
 input TaskInputDto {
   title: String!
   description: String!
   due_date: String!
-  status: String!
-  user_id: Float!
+  status: String
 }
 
 input TaskUpdateDto {
@@ -43,4 +44,15 @@ input TaskUpdateDto {
   description: String
   due_date: String
   status: String
+}
+
+input RegisterDto {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input LoginDto {
+  email: String!
+  password: String!
 }

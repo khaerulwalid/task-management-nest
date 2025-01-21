@@ -1,5 +1,5 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,10 @@ import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { TasksResolver } from './graphql/resolvers/task.resolvers';
+import { AuthModule } from './auth/auth.module';
+import { AuthResolver } from './graphql/resolvers/user.resolvers';
+import { GraphQLExceptionFilter } from './filters/all-exceptions.filter';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -29,11 +33,27 @@ import { TasksResolver } from './graphql/resolvers/task.resolvers';
       }),
       inject: [ConfigService],
     }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h' },
+      }),
+    }),
     TasksModule,
     UsersModule,
-    AttachmentsModule
+    AttachmentsModule,
+    AuthModule
   ],
   controllers: [],
-  providers: [TasksResolver],
+  providers: [
+    TasksResolver,
+    AuthResolver,
+    {
+      provide: 'APP_FILTER',
+      useClass: GraphQLExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
