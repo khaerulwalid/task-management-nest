@@ -1,0 +1,46 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: Int!
+  username: String!
+  email: String!
+  tasks: [Task!]
+}
+
+type Task {
+  id: Int!
+  title: String!
+  description: String!
+  due_date: String!
+  status: String!
+  user_id: Int!
+  user: User
+}
+
+type Query {
+  getTasks(filterByStatus: String, filterByDueDate: String): [Task!]!
+  getTaskDetail(id: Int!): Task!
+}
+
+type Mutation {
+  createTask(taskInput: TaskInputDto!): Task!
+  updateTask(id: Int!, taskInput: TaskUpdateDto!): Task!
+  deleteTask(id: Int!): Task!
+}
+
+input TaskInputDto {
+  title: String!
+  description: String!
+  due_date: String!
+  status: String!
+  user_id: Float!
+}
+
+input TaskUpdateDto {
+  title: String
+  description: String
+  due_date: String
+  status: String
+}
