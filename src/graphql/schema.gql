@@ -19,17 +19,25 @@ type Task {
   user: User
 }
 
+type Attachment {
+  id: Int!
+  file_path: String!
+  task_id: Int!
+  task: Task
+}
+
 type Query {
-  getTasks(filterByStatus: String, filterByDueDate: String): [Task!]!
+  getTasks(filterByStatus: String, filterByDueDate: String, search: String): [Task!]!
   getTaskDetail(id: Int!): Task!
 }
 
 type Mutation {
   createTask(taskInput: TaskInputDto!): Task!
-  updateTask(id: Int!, taskInput: TaskUpdateDto!): Task!
+  updateTask(id: Int!, taskUpdate: TaskUpdateDto!): Task!
   deleteTask(id: Int!): Task!
   register(registerInput: RegisterDto!): User!
   login(loginInput: LoginDto!): String!
+  uploadFile(taskId: Int!, file: Upload!): Attachment!
 }
 
 input TaskInputDto {
@@ -56,3 +64,6 @@ input LoginDto {
   email: String!
   password: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload

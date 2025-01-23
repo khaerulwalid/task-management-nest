@@ -1,8 +1,9 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Task } from './tasks.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity('users')
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,12 +15,6 @@ export class User {
 
   @Column({ type: 'varchar', length: 255 })
   password: string;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   // Relasi OneToMany dengan Task
   @OneToMany(() => Task, task => task.user)

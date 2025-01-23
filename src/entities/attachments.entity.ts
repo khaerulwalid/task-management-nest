@@ -1,19 +1,17 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Task } from './tasks.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity('attachments')
-export class Attachment {
+export class Attachment extends BaseEntity {
     @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
-  fileName: string;
+  file_path: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  filePath: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  fileType: string;
+  @Column()
+  task_id: number;
 
   @ManyToOne(() => Task, task => task.id, { onDelete: 'CASCADE' })
   task: Task;

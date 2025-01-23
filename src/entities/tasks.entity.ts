@@ -1,9 +1,10 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './users.entity';
 import { Attachment } from './attachments.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity('tasks')
-export class Task {
+export class Task extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,12 +22,6 @@ export class Task {
 
   @Column({ type: 'int', nullable: true })
   user_id: number;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   // Relasi ManyToOne dengan User
   @ManyToOne(() => User, user => user.tasks, { onDelete: 'SET NULL' })

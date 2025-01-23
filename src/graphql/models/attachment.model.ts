@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Task } from './task.model';
 
 @ObjectType()
 export class Attachment {
@@ -6,11 +7,11 @@ export class Attachment {
   id: number;
 
   @Field()
-  filename: string;
-
-  @Field()
-  fileUrl: string;
+  file_path: string;
 
   @Field(type => Int)
-  taskId: number;
+  task_id: number;
+
+  @Field(type => Task, { nullable: true })
+  task: Task;
 }

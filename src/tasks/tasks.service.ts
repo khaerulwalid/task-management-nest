@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Task } from 'src/entities/tasks.entity';
 import { TaskInputDto } from './dto/task.input';
 import { TaskUpdateDto } from './dto/task.update';
@@ -17,7 +17,7 @@ export class TasksService {
   ) {}
 
   // Mendapatkan semua tasks dengan filter opsional
-  async getTasks(filterByStatus?: string, filterByDueDate?: string): Promise<Task[]> {
+  async getTasks(filterByStatus?: string, filterByDueDate?: string, search?: string): Promise<Task[]> {
     try {
       const where: any = {};
 
@@ -27,6 +27,10 @@ export class TasksService {
 
       if (filterByDueDate) {
         where.due_date = filterByDueDate;
+      }
+
+      if (search) {
+        where.title = Like(`%${search}%`);
       }
 
       const result = await this.taskRepository.find({
@@ -45,7 +49,12 @@ export class TasksService {
   // Mendapatkan task berdasarkan ID
   async getTaskDetail(id: number): Promise<Task> {
     try {
-      const task = await this.taskRepository.findOne({ where: { id } });
+      const task = await this.taskRepository.findOne({
+        where: {
+          id
+        },
+        relations: ['user'],
+      });
 
       if (!task) {
         throw new GraphqlException(
@@ -92,13 +101,18 @@ export class TasksService {
   }
 
   // Mengupdate task yang sudah ada
-  async updateTask(id: number, taskDto: TaskUpdateDto): Promise<Task> {
+  async updateTask(id: number, taskDto: TaskUpdateDto, userId: number): Promise<Task> {
     try {
-      const task = await this.taskRepository.findOne({ where: { id } });
+      const task = await this.taskRepository.findOne({
+        where: {
+          id,
+          user_id: userId,
+        }
+      });
 
       if (!task) {
         throw new GraphqlException(
-          'Task not found',
+          'Task not found or you are not authorized to update this task',
           'NotFoundException',
           HttpStatus.NOT_FOUND,
         );
@@ -114,13 +128,18 @@ export class TasksService {
   }
 
   // Menghapus task berdasarkan ID
-  async deleteTask(id: number): Promise<Task> {
+  async deleteTask(id: number, userId: number): Promise<Task> {
     try {
-      const task = await this.taskRepository.findOne({ where: { id } });
+      const task = await this.taskRepository.findOne({
+        where: {
+          id,
+          user_id: userId,
+        }
+      });
 
       if (!task) {
         throw new GraphqlException(
-          'Task not found',
+          'Task not found or you are not authorized to update this task',
           'NotFoundException',
           HttpStatus.NOT_FOUND,
         );

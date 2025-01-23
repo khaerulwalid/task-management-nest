@@ -16,12 +16,13 @@ export class TasksResolver {
     @Query(returns => [Task])
     async getTasks(
         @Args('filterByStatus', { type: () => String, nullable: true }) filterByStatus?: string,
-        @Args('filterByDueDate', { type: () => String, nullable: true }) filterByDueDate?: string
+        @Args('filterByDueDate', { type: () => String, nullable: true }) filterByDueDate?: string,
+        @Args('search', { type: () => String, nullable: true }) search?: string,
     ): Promise<Task[]> {
         try {
             console.log("<<Masuk Resolver");
         
-            return this.tasksService.getTasks(filterByStatus, filterByDueDate);
+            return this.tasksService.getTasks(filterByStatus, filterByDueDate, search);
         } catch (error) {
             console.log(error, "<<Error Resolvers");
             
@@ -52,17 +53,21 @@ export class TasksResolver {
     @Mutation(returns => Task)
     updateTask(
         @Args('id', { type: () => Int }) id: number,
-        @Args('taskInput') taskInput: TaskUpdateDto
+        @Args('taskUpdate') taskUpdate: TaskUpdateDto,
+        @Context() context: any
     ): Promise<Task> {
-        return this.tasksService.updateTask(id, taskInput);
+        const userId = context.req.user.id;
+        return this.tasksService.updateTask(id, taskUpdate, userId);
     }
 
     // Mutation to delete a task by ID
     @Mutation(returns => Task)
     async deleteTask(
-        @Args('id', { type: () => Int }) id: number
+        @Args('id', { type: () => Int }) id: number,
+        @Context() context: any
     ): Promise<Task> {
-        const task = await this.tasksService.deleteTask(id);
+        const userId = context.req.user.id;
+        const task = await this.tasksService.deleteTask(id, userId);
 
         return task;
     }
