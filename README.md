@@ -74,6 +74,61 @@ CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 ```
 
+### Penjelasan Variabel
+
+1. Database Configuration:
+
+- DB_TYPE: Tipe database yang digunakan, misalnya postgres, mysql, mongodb, atau lainnya.
+- DB_HOST: Host server database, misalnya localhost atau IP address server database.
+- DB_PORT: Port yang digunakan untuk mengakses database, default untuk PostgreSQL adalah 5432.
+- DB_USERNAME: Username untuk autentikasi ke database.
+- DB_PASSWORD: Password untuk autentikasi ke database.
+- DB_NAME: Nama database yang digunakan dalam aplikasi ini.
+  Contoh:
+
+```graphql
+DB_TYPE=postgres
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password
+DB_NAME=your_database_name
+```
+
+2. JSON Web Token (JWT) Configuration:
+
+- JWT_SECRET: Secret key yang digunakan untuk enkripsi dan dekripsi token JWT. Pastikan menggunakan nilai yang kompleks untuk alasan keamanan.
+  Contoh:
+
+```graphql
+JWT_SECRET=your_very_secure_jwt_secret_key
+```
+
+3. Cloudinary Configuration:
+
+- CLOUDINARY_CLOUD_NAME: Nama cloud yang Anda gunakan di Cloudinary (terdapat di dashboard akun Cloudinary).
+- CLOUDINARY_API_KEY: API Key dari Cloudinary untuk mengakses layanan upload.
+- CLOUDINARY_API_SECRET: API Secret dari Cloudinary yang berfungsi untuk autentikasi.
+  Contoh:
+
+```graphql
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
+
+### Cara Menggunakan .env File
+
+1. Buat file .env di direktori root proyek Anda.
+2. Masukkan semua variabel di atas dengan nilai sesuai konfigurasi sistem Anda.
+3. Pastikan .env file diabaikan oleh Git dengan menambahkan entri berikut di .gitignore:
+
+```graphql
+   .env
+```
+
+4. Library seperti @nestjs/config atau dotenv akan secara otomatis membaca variabel lingkungan dari file .env.
+
 ## Api Endpoint
 
 ### 1. **Login**
@@ -89,6 +144,8 @@ CLOUDINARY_API_SECRET=
     )
   }
   ```
+
+````
 
 #### B. _Response_
 
@@ -682,7 +739,133 @@ Bearer your_string_token
 }
 ```
 
-### 8. **General Error Message**
+### 8. **Upload Image**
+
+#### A. _Request_
+
+- **URL**: `POST /graphql`
+- **Request Header**:
+
+| Header          | Tipe   | Deskripsi                       |
+| --------------- | ------ | ------------------------------- |
+| `Authorization` | String | Token Bearer untuk autentikasi. |
+
+```graphql
+Bearer your_string_token
+```
+
+- **GraphQL Mutation**:
+
+  ```graphql
+  mutation ($taskId: Int!, $file: Upload!) {
+    uploadFile(taskId: $taskId, file: $file) {
+      id
+      file_path
+    }
+  }
+  ```
+
+- **variables**:
+
+```graphql
+{
+  "taskId": 1,
+  "file": null
+}
+```
+
+- **Map**:
+
+```graphql
+{
+  "0": ["variables.file"]
+}
+```
+
+- **Input file**:
+
+```graphql
+0: file
+```
+
+#### B. _Response_
+
+- **GraphQL Response**:
+
+  ```graphql
+  {
+  "data": {
+    "uploadFile": {
+      "id": number,
+      "file_path": "string"
+    }
+  }
+  }
+
+  ```
+
+#### C. _Error Handling_
+
+##### a. **No file uploaded**
+
+- **Status Code**: 400
+- **GraphQL Error Message**: `No file uploaded`
+- **GraphQL Error Path**: `uploadFile`
+- **Response**:
+
+```graphql
+  {
+  "errors": [
+    {
+      "message": "No file uploaded",
+      "locations": [
+        {
+          "line": 2,
+          "column": 3
+        }
+      ],
+      "path": ["uploadFile"],
+      "extensions": {
+        "code": "HTTP_EXCEPTION",
+        "status": 400
+      }
+    }
+  ],
+  "data": null
+}
+```
+
+##### a. **Invalid file type. Only JPEG and PNG are allowed.**
+
+- **Status Code**: 400
+- **GraphQL Error Message**: `Invalid file type. Only JPEG and PNG are allowed.`
+- **GraphQL Error Path**: `uploadFile`
+- **Response**:
+
+```graphql
+  {
+  "errors": [
+    {
+      "message": "Invalid file type. Only JPEG and PNG are allowed.",
+      "locations": [
+        {
+          "line": 2,
+          "column": 3
+        }
+      ],
+      "path": ["uploadFile"],
+      "extensions": {
+        "code": "HTTP_EXCEPTION",
+        "status": 400
+      }
+    }
+  ],
+  "data": null
+}
+
+```
+
+### 9. **General Error Message**
 
 #### A. _Error Handling_
 
@@ -844,3 +1027,4 @@ but the exact implementation may vary depending on the project's scope.
 ```graphql
   Assumption: The optional search feature supports searching tasks by title and description, using a basic text-matching approach.
 ```
+````
