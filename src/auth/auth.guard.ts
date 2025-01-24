@@ -34,7 +34,11 @@ export class AuthGuard implements CanActivate {
       };
       return true;
     } catch (error) {
-      throw new Error('Invalid or expired token');
+      throw new GraphqlException(
+        'Invalid or expired token',
+        'BadRequest',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }

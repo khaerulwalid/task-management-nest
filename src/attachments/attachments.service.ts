@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Attachment } from 'src/entities/attachments.entity';
 import { Repository } from 'typeorm';
 import { v2 as cloudinary } from 'cloudinary';
+import '../config/cloudinary.config'; 
 
 @Injectable()
 export class AttachmentsService {

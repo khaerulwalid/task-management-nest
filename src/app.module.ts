@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { AuthResolver } from './graphql/resolvers/user.resolvers';
 import { GraphQLExceptionFilter } from './filters/all-exceptions.filter';
 import { JwtModule } from '@nestjs/jwt';
+import { GraphQLUpload } from 'graphql-upload-ts';
 
 @Module({
   imports: [
@@ -53,6 +54,10 @@ import { JwtModule } from '@nestjs/jwt';
     {
       provide: 'APP_FILTER',
       useClass: GraphQLExceptionFilter,
+    },
+    {
+      provide: 'Upload',
+      useValue: GraphQLUpload, // Tambahkan scalar Upload
     },
   ],
 })

@@ -7,6 +7,7 @@ import { User } from 'src/entities/users.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { GetTasksResolver } from 'src/graphql/resolvers/get-task.resolvers';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { JwtModule } from '@nestjs/jwt';
           }),
     })
   ],
-  providers: [TasksService, TasksResolver, AuthGuard],
+  providers: [TasksService, TasksResolver, AuthGuard, GetTasksResolver],
   exports: [TasksService],
 })
 export class TasksModule {}
