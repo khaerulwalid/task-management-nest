@@ -16,7 +16,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             secret: configService.get<string>('JWT_SECRET'),
             signOptions: { expiresIn: '4h' },
           }),
-    }), // Menambahkan repository ke dalam module
+    }),
   ],
   providers: [AttachmentsService, AttachmentResolver],
   exports: [AttachmentsService],

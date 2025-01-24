@@ -12,19 +12,16 @@ import { AuthGuard } from "src/auth/auth.guard";
 export class TasksResolver {
     constructor(private tasksService: TasksService) {}
 
-    // Mutation to create a new task
     @Mutation(returns => Task)
     createTask(
         @Args('taskInput') taskInput: TaskInputDto,
         @Context() context: any
     ): Promise<Task> {
         const userId = context.req.user.id;
-        console.log(userId, "<<userId");
         
         return this.tasksService.createTask(taskInput, userId);
     }
 
-    // Mutation to update an existing task by ID
     @Mutation(returns => Task)
     updateTask(
         @Args('id', { type: () => Int }) id: number,
@@ -35,7 +32,6 @@ export class TasksResolver {
         return this.tasksService.updateTask(id, taskUpdate, userId);
     }
 
-    // Mutation to delete a task by ID
     @Mutation(returns => Task)
     async deleteTask(
         @Args('id', { type: () => Int }) id: number,

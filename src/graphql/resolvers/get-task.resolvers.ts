@@ -11,7 +11,6 @@ import { AuthGuard } from "src/auth/auth.guard";
 export class GetTasksResolver {
     constructor(private tasksService: TasksService) {}
 
-    // Query to get all tasks created by user, optionally filtered by status or due date
     @Query(returns => [Task])
     async getTasks(
         @Args('filterByStatus', { type: () => String, nullable: true }) filterByStatus?: string,
@@ -19,12 +18,10 @@ export class GetTasksResolver {
         @Args('search', { type: () => String, nullable: true }) search?: string,
     ): Promise<Task[]> {
         try {
-            console.log("<<Masuk Resolver");
         
             return this.tasksService.getTasks(filterByStatus, filterByDueDate, search);
         } catch (error) {
-            console.log(error, "<<Error Resolvers");
-            
+            throw error;
         }
     }
 

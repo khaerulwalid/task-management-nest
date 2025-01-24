@@ -5,6 +5,9 @@ import { User } from 'src/entities/users.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthResolver } from 'src/graphql/resolvers/user.resolvers';
+import { UserValidationService } from 'src/common/validation/user-validation.service';
+import { HashingService } from 'src/common/hashing.service';
+import { TokenService } from 'src/common/token.service';
 
 @Module({
   imports: [
@@ -19,7 +22,7 @@ import { AuthResolver } from 'src/graphql/resolvers/user.resolvers';
       }),
     })
   ],
-  providers: [AuthService, AuthResolver],
-  exports: [AuthService]
+  providers: [AuthService, AuthResolver, UserValidationService, HashingService, TokenService],
+  exports: [AuthService, UserValidationService]
 })
 export class AuthModule {}

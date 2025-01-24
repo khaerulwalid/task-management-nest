@@ -23,7 +23,6 @@ export class Task extends BaseEntity {
   @Column({ type: 'int', nullable: true })
   user_id: number;
 
-  // Relasi ManyToOne dengan User
   @ManyToOne(() => User, user => user.tasks, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })
   user: User;

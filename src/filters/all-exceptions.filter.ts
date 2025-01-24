@@ -12,8 +12,6 @@ export class GraphQLExceptionFilter implements ExceptionFilter {
         const response = exception.getResponse() as any;
         const status = exception.getStatus();
     
-        console.log(status, '<< Status dari GraphqlException');
-    
         return new GraphQLError(response.message || 'Internal server error', {
             extensions: {
                 code: response.code || 'INTERNAL_SERVER_ERROR',
@@ -26,8 +24,6 @@ export class GraphQLExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
         const response = exception.getResponse() as any;
         const status = exception.getStatus();
-    
-        console.log(status, '<< Status dari HttpException');
     
         return new GraphQLError(response.message || 'Internal server error', {
             extensions: {

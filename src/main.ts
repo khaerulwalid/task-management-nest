@@ -15,14 +15,9 @@ async function bootstrap() {
     graphqlUploadExpress({ 
       maxFileSize: 10000000,
       maxFiles: 10,
-      // If you are using framework around express like [ NestJS or Apollo Serve ]
-      // use this options overrideSendResponse to allow nestjs to handle response errors like throwing exceptions
       overrideSendResponse: false
     }) 
   );
-
-  // Middleware graphql-upload
-  // app.use(graphqlUploadExpress());
 
   const httpAdapterHost = app.get(HttpAdapterHost);
 

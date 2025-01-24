@@ -11,7 +11,6 @@ import { GraphQLUpload, FileUpload } from 'graphql-upload-ts';
 export class AttachmentResolver {
   constructor(private readonly attachmentService: AttachmentsService) {}
 
-  // Mutation untuk mengupload file dan menyimpan ke tabel attachments
   @Mutation(returns => Attachment)
   async uploadFile(
     @Args('taskId',  { type: () => Int }) taskId: number,
@@ -24,22 +23,18 @@ export class AttachmentResolver {
     }
 
     const { createReadStream, filename, mimetype } = file as any;
-    console.log(mimetype, "<<mimetype");
+
     const readStream = createReadStream();
-    console.log(readStream, "<<Stream");
-    
+
     if (!['image/jpeg', 'image/png'].includes(mimetype)) {
         throw new Error('Invalid file type. Only JPEG and PNG are allowed.');
     }
 
-    // Proses upload ke penyimpanan
     const filePath = await this.attachmentService.uploadToCloudinary(
       readStream,
       filename,
     );
-    console.log(filePath, "<<filePath");
     
-    // Menyimpan data file di tabel attachments
     const attachment = await this.attachmentService.create(taskId, filePath);
     
     return attachment;

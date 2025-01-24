@@ -12,7 +12,6 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context).getContext();
     const authHeader = gqlContext.req.headers['authorization'];
-    console.log(authHeader, "<<authHeader");
 
     if (!authHeader) {
       throw new GraphqlException(
@@ -26,7 +25,6 @@ export class AuthGuard implements CanActivate {
     
     try {
       const decoded = await this.jwtService.verifyAsync(token);
-      console.log(decoded, "<<decoded");
       
       gqlContext.req.user = {
         id: decoded.sub,

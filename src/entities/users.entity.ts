@@ -16,7 +16,6 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
-  // Relasi OneToMany dengan Task
   @OneToMany(() => Task, task => task.user)
   tasks: Task[];
 }

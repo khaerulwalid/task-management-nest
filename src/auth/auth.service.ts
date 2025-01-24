@@ -5,13 +5,16 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { GraphqlException } from 'src/common/graphql.exception';
+import { HashingService } from 'src/common/hashing.service';
+import { TokenService } from 'src/common/token.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly jwtService: JwtService,
+        private readonly hashingService: HashingService,
+        private readonly tokenService: TokenService,
       ) {}
 
       async register(username: string, email: string, password: string): Promise<User> {
@@ -27,7 +30,7 @@ export class AuthService {
                 );
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await this.hashingService.hashPassword(password);
     
             const newUser = this.userRepository.create({ username, email, password: hashedPassword });
 
@@ -51,7 +54,7 @@ export class AuthService {
             );
         }
     
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await this.hashingService.comparePassword(password, user.password);
         if (!isPasswordValid) {
             throw new GraphqlException(
                 'Invalid email or password',
@@ -60,8 +63,8 @@ export class AuthService {
             );
         }
     
-        const payload = { username: user.username, sub: user.id };
-        const token = this.jwtService.sign(payload);
+        // const payload = { username: user.username, sub: user.id };
+        const token = this.tokenService.generateToken(user);
     
         return { token };
       }

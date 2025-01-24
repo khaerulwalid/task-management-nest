@@ -8,6 +8,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { GetTasksResolver } from 'src/graphql/resolvers/get-task.resolvers';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { GetTasksResolver } from 'src/graphql/resolvers/get-task.resolvers';
             secret: configService.get<string>('JWT_SECRET'),
             signOptions: { expiresIn: '1h' },
           }),
-    })
+    }),
+    AuthModule
   ],
   providers: [TasksService, TasksResolver, AuthGuard, GetTasksResolver],
   exports: [TasksService],
