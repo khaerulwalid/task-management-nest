@@ -42,20 +42,14 @@ This is a backend application built with NestJS for managing tasks. It includes 
    ```
 2. Navigate to the project directory:
    ```sh
-   cd task-management-api
+   cd task-management-nest
    ```
 3. Install dependencies using npm:
+   - Before using npm, make sure you have Node.js installed. Once Node.js is installed, you can install the necessary dependencies for your project by running:
    ```sh
    npm install
    ```
-
-## Usage
-
-1. Start the application:
-   ```sh
-   npm run start:dev
-   ```
-2. The application will be running on `http://localhost:3000`.
+   - This command will download and install all the dependencies listed in the package.json file.
 
 ## Environment Variables
 
@@ -74,17 +68,17 @@ CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 ```
 
-### Penjelasan Variabel
+#### Variable Explanation
 
 1. Database Configuration:
 
-- DB_TYPE: Tipe database yang digunakan, misalnya postgres, mysql, mongodb, atau lainnya.
-- DB_HOST: Host server database, misalnya localhost atau IP address server database.
-- DB_PORT: Port yang digunakan untuk mengakses database, default untuk PostgreSQL adalah 5432.
-- DB_USERNAME: Username untuk autentikasi ke database.
-- DB_PASSWORD: Password untuk autentikasi ke database.
-- DB_NAME: Nama database yang digunakan dalam aplikasi ini.
-  Contoh:
+- DB_TYPE: The type of database being used, such as PostgreSQL, MySQL, MongoDB, or others.
+- DB_HOST: The database server host, such as localhost or the IP address of the database server.
+- DB_PORT: The port used to access the database. The default port for PostgreSQL is 5432.
+- DB_USERNAME: The username for authenticating to the database.
+- DB_PASSWORD: The password for authenticating to the database.
+- DB_NAME: The name of the database used in this application.
+  Example:
 
 ```graphql
 DB_TYPE=postgres
@@ -97,8 +91,8 @@ DB_NAME=your_database_name
 
 2. JSON Web Token (JWT) Configuration:
 
-- JWT_SECRET: Secret key yang digunakan untuk enkripsi dan dekripsi token JWT. Pastikan menggunakan nilai yang kompleks untuk alasan keamanan.
-  Contoh:
+- JWT_SECRET: The secret key used for encrypting and decrypting the JWT token. Make sure to use a complex value for security reasons.
+  Example:
 
 ```graphql
 JWT_SECRET=your_very_secure_jwt_secret_key
@@ -106,10 +100,11 @@ JWT_SECRET=your_very_secure_jwt_secret_key
 
 3. Cloudinary Configuration:
 
-- CLOUDINARY_CLOUD_NAME: Nama cloud yang Anda gunakan di Cloudinary (terdapat di dashboard akun Cloudinary).
-- CLOUDINARY_API_KEY: API Key dari Cloudinary untuk mengakses layanan upload.
-- CLOUDINARY_API_SECRET: API Secret dari Cloudinary yang berfungsi untuk autentikasi.
-  Contoh:
+- CLOUDINARY_CLOUD_NAME: The name of the cloud you are using in Cloudinary (found in your Cloudinary account dashboard).
+- CLOUDINARY_API_KEY: The API key from Cloudinary used to access the upload service.
+- CLOUDINARY_API_SECRET: The API secret from Cloudinary used for authentication
+
+Example:
 
 ```graphql
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
@@ -117,17 +112,43 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
-### Cara Menggunakan .env File
+#### How to Use the .env File
 
-1. Buat file .env di direktori root proyek Anda.
-2. Masukkan semua variabel di atas dengan nilai sesuai konfigurasi sistem Anda.
-3. Pastikan .env file diabaikan oleh Git dengan menambahkan entri berikut di .gitignore:
+1. Create a .env file in the root directory of your project.
+2. Add all the variables above with values according to your system configuration.
+3. Make sure the .env file is ignored by Git by adding the following entry in the .gitignore:
 
 ```graphql
    .env
 ```
 
-4. Library seperti @nestjs/config atau dotenv akan secara otomatis membaca variabel lingkungan dari file .env.
+4. Libraries such as @nestjs/config or dotenv will automatically read environment variables from the .env file.
+
+### Create Database
+
+Before running the migration, create a database with the name that matches the DB_NAME in the .env file. Run the following command in the MySQL CLI:
+
+```graphql
+CREATE DATABASE task_management;
+```
+
+Or, you can use GUI tools like phpMyAdmin or MySQL Workbench to create the database.
+
+### Run Migration
+
+After the database is created and the environment is set up, run the migration to initialize the tables in the database:
+
+```graphql
+npm run migration:run
+```
+
+## Usage
+
+1. Start the application:
+   ```sh
+   npm run start:dev
+   ```
+2. The application will be running on `http://localhost:3000`.
 
 ## Api Endpoint
 
