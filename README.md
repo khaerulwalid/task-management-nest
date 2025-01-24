@@ -166,8 +166,6 @@ npm run migration:run
   }
   ```
 
-````
-
 #### B. _Response_
 
 - **GraphQL Response**:
@@ -1048,4 +1046,3 @@ but the exact implementation may vary depending on the project's scope.
 ```graphql
   Assumption: The optional search feature supports searching tasks by title and description, using a basic text-matching approach.
 ```
-````
