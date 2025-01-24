@@ -960,18 +960,6 @@ Bearer your_string_token
 }
 ```
 
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request.
-
-## License
-
-This project is licensed under the MIT License.
-
-```
-
-```
-
 ## Assumptions Made During Development
 
 1. **User Authentication and Authorization**
