@@ -74,16 +74,16 @@ CLOUDINARY_API_SECRET=
 
 - DB_TYPE: The type of database being used, such as PostgreSQL, MySQL, MongoDB, or others.
 - DB_HOST: The database server host, such as localhost or the IP address of the database server.
-- DB_PORT: The port used to access the database. The default port for PostgreSQL is 5432.
+- DB_PORT: The port used to access the database. The default port for mysql is 3306.
 - DB_USERNAME: The username for authenticating to the database.
 - DB_PASSWORD: The password for authenticating to the database.
 - DB_NAME: The name of the database used in this application.
   Example:
 
 ```graphql
-DB_TYPE=postgres
+DB_TYPE=mysql
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=3306
 DB_USERNAME=your_database_user
 DB_PASSWORD=your_database_password
 DB_NAME=your_database_name
